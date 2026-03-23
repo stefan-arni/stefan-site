@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0d1117;
+  --color-bg-card: #141a22;
+  --color-border: #1e2733;
+  --color-border-hover: #2a3544;
+  --color-fg: #e0e4e8;
+  --color-fg-dim: #7a8694;
+  --color-fg-dimmer: #4a5568;
+  --color-accent: #5eda9e;
+  --color-accent-dim: rgba(94, 218, 158, 0.1);
+  --color-accent-glow: rgba(94, 218, 158, 0.06);
+  --color-purple: #7b8cde;
+  --color-purple-dim: rgba(123, 140, 222, 0.1);
+  --color-purple-glow: rgba(123, 140, 222, 0.06);
+  --color-pink: #c97bb5;
+  --color-pink-dim: rgba(201, 123, 181, 0.1);
+  --color-pink-glow: rgba(201, 123, 181, 0.06);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-fg-dimmer);
+}
+
+/* ─── Cursor blink for typewriter ──────────────────────────────── */
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ─── Pulsing dot for "building" projects ────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── Glitch effect on nav text ──────────────────────────────── */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-text:hover {
+  animation: glitch-main 300ms steps(2) forwards;
+}
+
+.glitch-text:hover::before {
+  opacity: 0.8;
+  color: #5eda9e;
+  animation: glitch-layer1 300ms steps(3) forwards;
+  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+}
+
+.glitch-text:hover::after {
+  opacity: 0.8;
+  color: #7b8cde;
+  animation: glitch-layer2 300ms steps(3) forwards;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-main {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+}
+
+@keyframes glitch-layer1 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(3px, -1px); }
+  40% { transform: translate(-2px, 1px); }
+  60% { transform: translate(2px, 1px); }
+  80% { transform: translate(-1px, -2px); }
+}
+
+@keyframes glitch-layer2 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 1px); }
+  80% { transform: translate(1px, -2px); }
+}
+
+/* ─── Top accent line slide-in on project cards ──────────────── */
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-purple), var(--color-pink));
+  transition: width 0.3s ease;
+}
+
+.project-card:hover::before {
+  width: 100%;
+}
+
+/* ─── Aurora gradient border cards (about cards, now card) ───── */
+.aurora-border-card {
+  position: relative;
+  border: 1px solid var(--color-border);
+}
+
+.aurora-border-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-purple), var(--color-pink));
+  opacity: 0.35;
+  border-radius: 2px 2px 0 0;
+  transition: opacity 0.3s ease;
+}
+
+.aurora-border-card:hover::after {
+  opacity: 0.65;
+}
+
+/* ─── Project card aurora glow on hover ──────────────────────── */
+.aurora-card-glow {
+  position: relative;
+}
+
+.aurora-card-glow::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 10%;
+  right: 10%;
+  height: 40px;
+  background: radial-gradient(ellipse at center, rgba(94,218,158,0.06) 0%, rgba(123,140,222,0.04) 40%, transparent 70%);
+  filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.aurora-card-glow:hover::after {
+  opacity: 1;
+}
+
+/* ─── Aurora gradient text (for "ships." highlight) ──────────── */
+.aurora-gradient-text {
+  background: linear-gradient(135deg, #5eda9e 0%, #7b8cde 60%, #c97bb5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Aurora gradient background for highlight pills ─────────── */
+.aurora-gradient-text-bg {
+  background: linear-gradient(90deg, rgba(94,218,158,0.1) 0%, rgba(123,140,222,0.1) 50%, rgba(201,123,181,0.06) 100%);
+  color: var(--color-accent);
+}
