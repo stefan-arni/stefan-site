@@ -4,7 +4,7 @@ import { useRef } from 'react';
 
 export default function CountUp({ end, decimals = 0, duration = 1500, suffix = '' }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true });
   const [value, setValue] = useState(0);
 
   useEffect(() => {

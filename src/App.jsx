@@ -1,3 +1,5 @@
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, FileText, ArrowDown } from 'lucide-react';
 
@@ -8,6 +10,8 @@ import Nav from './components/Nav';
 import ScrollReveal from './components/ScrollReveal';
 import AuroraReveal from './components/AuroraReveal';
 import CountUp from './components/CountUp';
+import ProjectPage from './pages/ProjectPage';
+import PROJECTS from './data/projects';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -44,36 +48,6 @@ const EXPERIENCE = [
   },
 ];
 
-const PROJECTS = [
-  {
-    title: 'Pharmacy Desert Finder',
-    status: 'shipped',
-    description:
-      'ZIP-code level pharmacy access shortfall index. Poisson GLM + XGBoost residual correction. Presented to Walgreens, in commercialization discussions with a Fortune 10 healthcare company.',
-    tags: ['XGBoost', 'GLM', 'Geospatial'],
-  },
-  {
-    title: 'ESP32 TinyML Voice Control',
-    status: 'shipped',
-    description:
-      'End-to-end keyword spotting on an ESP32 microcontroller. MFCC preprocessing, compact CNN, deployed as int8 TFLite Micro model under 32KB.',
-    tags: ['C/C++', 'TFLite Micro', 'TinyML'],
-  },
-  {
-    title: 'LLM Fine-tuning',
-    status: 'building',
-    description:
-      'QLoRA fine-tune for a specialized NLP task. Synthetic data generation pipeline, rigorous evaluation. Details dropping soon.',
-    tags: ['LLM', 'QLoRA', 'HuggingFace'],
-  },
-  {
-    title: 'Agentic AI & More',
-    status: 'building',
-    description:
-      'Building deployed applications with agentic AI, tool use, and RAG. Repos coming soon.',
-    tags: ['Agents', 'RAG', 'Cloudflare'],
-  },
-];
 
 const STACK = {
   'Languages': ['Python', 'TypeScript', 'SQL', 'C/C++', 'Bash'],
@@ -163,13 +137,16 @@ function Tag({ children }) {
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 
-export default function App() {
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+function HomePage() {
   return (
-    <>
-      <AuroraCanvas />
-      <CursorTrail />
-      <CommandPalette />
-      <Nav />
 
       <div className="relative z-10">
         {/* ─── HERO ─────────────────────────────────────────────────────── */}
@@ -330,33 +307,35 @@ export default function App() {
             <div className="grid md:grid-cols-2 gap-3.5">
               {PROJECTS.map((proj, i) => (
                 <ScrollReveal key={i} delay={i * 0.08}>
-                  <div className="project-card relative bg-bg-card border border-border rounded-lg p-5 hover:-translate-y-0.5 transition-all overflow-hidden h-full flex flex-col aurora-card-glow">
-                    <div className="flex items-center gap-2 mb-2.5">
-                      {proj.status === 'shipped' ? (
-                        <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                          <span className="font-mono text-[11px] text-accent">shipped</span>
-                        </>
-                      ) : (
-                        <>
-                          <span
-                            className="w-1.5 h-1.5 rounded-full bg-pink"
-                            style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
-                          />
-                          <span className="font-mono text-[11px] text-pink">building</span>
-                        </>
-                      )}
-                    </div>
+                  <Link to={`/projects/${proj.slug}`} className="block h-full cursor-pointer">
+                    <div className="project-card relative bg-bg-card border border-border rounded-lg p-5 hover:-translate-y-0.5 transition-all overflow-hidden h-full flex flex-col aurora-card-glow">
+                      <div className="flex items-center gap-2 mb-2.5">
+                        {proj.status === 'shipped' ? (
+                          <>
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                            <span className="font-mono text-[11px] text-accent">shipped</span>
+                          </>
+                        ) : (
+                          <>
+                            <span
+                              className="w-1.5 h-1.5 rounded-full bg-pink"
+                              style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
+                            />
+                            <span className="font-mono text-[11px] text-pink">building</span>
+                          </>
+                        )}
+                      </div>
 
-                    <h3 className="font-display text-base font-semibold text-fg mb-1.5">{proj.title}</h3>
-                    <p className="text-fg-dim text-sm leading-relaxed mb-3 flex-1">{proj.description}</p>
+                      <h3 className="font-display text-base font-semibold text-fg mb-1.5">{proj.title}</h3>
+                      <p className="text-fg-dim text-sm leading-relaxed mb-3 flex-1">{proj.description}</p>
 
-                    <div className="flex flex-wrap gap-1.5">
-                      {proj.tags.map((tag) => (
-                        <Tag key={tag}>{tag}</Tag>
-                      ))}
+                      <div className="flex flex-wrap gap-1.5">
+                        {proj.tags.map((tag) => (
+                          <Tag key={tag}>{tag}</Tag>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </ScrollReveal>
               ))}
             </div>
@@ -460,6 +439,22 @@ export default function App() {
           </div>
         </footer>
       </div>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <AuroraCanvas />
+      <CursorTrail />
+      <CommandPalette />
+      <Nav />
+      <ScrollToTop />
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/projects/:slug" element={<ProjectPage />} />
+      </Routes>
     </>
   );
 }
