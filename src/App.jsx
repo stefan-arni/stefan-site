@@ -13,7 +13,7 @@ import CountUp from './components/CountUp';
 
 const LINKS = [
   { label: 'GitHub', icon: Github, href: 'https://github.com/stefan-arni' },
-  { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/stefan-arni/' },
+  { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354' },
   { label: 'Email', icon: Mail, href: 'mailto:sa2467@cornell.edu' },
   { label: 'Resume', icon: FileText, href: '/resume.pdf' },
 ];
@@ -23,6 +23,7 @@ const EXPERIENCE = [
     title: 'ML Researcher',
     company: 'Cornell Tech / Weill Cornell Medicine',
     lab: 'Sabuncu Lab',
+    labUrl: 'https://sabuncu.engineering.cornell.edu',
     date: 'Jan 2026 - Present',
     location: 'New York, NY',
     description:
@@ -33,6 +34,7 @@ const EXPERIENCE = [
     title: 'Clinical ML Engineer',
     company: 'National University Hospital of Iceland',
     lab: 'Landspitali',
+    labUrl: 'https://www.linkedin.com/company/landspitali-university-hospital/?originalSubdomain=is',
     date: 'May 2024 - Aug 2025',
     location: 'Reykjavik, Iceland',
     description:
@@ -73,10 +75,13 @@ const PROJECTS = [
   },
 ];
 
-const STACK = [
-  'Python', 'PyTorch', 'TensorFlow', 'scikit-learn', 'XGBoost',
-  'Transformers', 'SHAP', 'C/C++', 'CUDA', 'SQL', 'Pandas', 'NumPy', 'Git', 'React',
-];
+const STACK = {
+  'Languages': ['Python', 'TypeScript', 'SQL', 'C/C++', 'Bash'],
+  'ML/AI': ['PyTorch', 'TensorFlow', 'scikit-learn', 'XGBoost', 'nnU-Net', 'TotalSegmentator', 'Transformers', 'SHAP', 'Pandas', 'NumPy'],
+  'LLM/NLP': ['RAG Systems', 'Agentic AI', 'LLM Function Calling', 'Prompt Engineering', 'Structured Output Parsing', 'Gemini API', 'OpenAI API'],
+  'Infrastructure': ['Cloudflare Workers/D1/Pages', 'FastAPI', 'React', 'Vite', 'Slurm/HPC', 'CUDA', 'Git', 'Jupyter/Colab'],
+  'Methods': ['Medical Image Segmentation', 'Tabular Modeling', 'Clinical NLP', 'Computer Vision', 'Explainability', 'Calibration', 'Spaced Repetition'],
+};
 
 const EDUCATION = [
   {
@@ -287,7 +292,11 @@ export default function App() {
                     <div>
                       <h3 className="font-display text-lg font-semibold text-fg mb-0.5">{exp.title}</h3>
                       <p className="text-sm mb-0.5 text-accent">{exp.company}</p>
-                      <p className="font-mono text-[11px] text-fg-dimmer mb-3">{exp.lab}</p>
+                      {exp.labUrl ? (
+                        <a href={exp.labUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] text-fg-dimmer mb-3 block hover:text-accent transition-colors">{exp.lab}</a>
+                      ) : (
+                        <p className="font-mono text-[11px] text-fg-dimmer mb-3">{exp.lab}</p>
+                      )}
                       <p className="text-fg-dim text-sm leading-relaxed mb-3">{exp.description}</p>
 
                       {exp.highlight && (
@@ -361,17 +370,26 @@ export default function App() {
               <SectionLabel>stack</SectionLabel>
             </ScrollReveal>
 
-            <div className="flex flex-wrap gap-1.5">
-              {STACK.map((item, i) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.04, duration: 0.4 }}
-                >
-                  <Tag>{item}</Tag>
-                </motion.div>
+            <div className="space-y-5">
+              {Object.entries(STACK).map(([category, items], ci) => (
+                <ScrollReveal key={category} delay={ci * 0.08}>
+                  <div>
+                    <p className="font-mono text-[11px] text-fg-dimmer uppercase tracking-wider mb-2">{category}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {items.map((item, i) => (
+                        <motion.div
+                          key={item}
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: ci * 0.08 + i * 0.03, duration: 0.4 }}
+                        >
+                          <Tag>{item}</Tag>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -432,12 +450,12 @@ export default function App() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-fg-dimmer font-mono">
             <p>
               built with mass amounts of coffee and claude code · nyc 2026 ·{' '}
-              <span className="text-purple/40">press cmd+k</span>
+              <span className="text-purple/40 hidden md:inline">press cmd+k</span>
             </p>
             <div className="flex items-center gap-4">
               <a href="mailto:sa2467@cornell.edu" className="hover:text-accent transition-colors">sa2467@cornell.edu</a>
               <a href="https://github.com/stefan-arni" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">GitHub</a>
-              <a href="https://www.linkedin.com/in/stefan-arni/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
+              <a href="https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
             </div>
           </div>
         </footer>
