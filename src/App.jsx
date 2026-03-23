@@ -137,12 +137,39 @@ function Tag({ children }) {
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
+function ScrollToHash() {
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      // Wait a tick for the DOM to render, then scroll to the hash target
+      setTimeout(() => {
+        const el = document.getElementById(hash.replace('#', ''));
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 50);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
   return null;
+}
+
+function NotFound() {
+  return (
+    <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-5">
+      <p className="font-display text-[8rem] md:text-[10rem] font-bold leading-none text-fg/10">
+        404
+      </p>
+      <p className="text-fg-dim text-sm mb-6 -mt-2">page not found</p>
+      <Link
+        to="/"
+        className="font-mono text-xs text-accent hover:underline transition-colors"
+      >
+        &larr; back home
+      </Link>
+    </div>
+  );
 }
 
 function HomePage() {
@@ -449,11 +476,12 @@ export default function App() {
       <CursorTrail />
       <CommandPalette />
       <Nav />
-      <ScrollToTop />
+      <ScrollToHash />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects/:slug" element={<ProjectPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

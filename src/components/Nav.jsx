@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { label: 'about', href: '#about' },
@@ -10,10 +11,18 @@ const NAV_ITEMS = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 50);
+
+      if (!isHome) {
+        setActive('');
+        return;
+      }
 
       const sections = ['about', 'experience', 'projects', 'contact'];
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -28,7 +37,22 @@ export default function Nav() {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isHome]);
+
+  const handleNavClick = (e, item) => {
+    const section = item.href.replace('#', '');
+
+    if (isHome) {
+      e.preventDefault();
+      const el = document.getElementById(section);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      e.preventDefault();
+      navigate(`/#${section}`);
+    }
+  };
 
   return (
     <nav
@@ -53,9 +77,10 @@ export default function Nav() {
           {NAV_ITEMS.map((item) => (
             <a
               key={item.label}
-              href={item.href}
+              href={`/${item.href}`}
+              onClick={(e) => handleNavClick(e, item)}
               className={`text-xs transition-colors ${
-                active === item.label.replace('#', '')
+                active === item.label
                   ? 'text-accent'
                   : 'text-fg-dim hover:text-fg'
               }`}

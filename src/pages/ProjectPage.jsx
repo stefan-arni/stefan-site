@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Github, ExternalLink, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PROJECTS from '../data/projects';
@@ -146,7 +146,20 @@ function ScreenshotSlot({ slug, index = 0 }) {
 
 export default function ProjectPage() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const project = PROJECTS.find((p) => p.slug === slug);
+
+  const handleBackClick = (e) => {
+    e.preventDefault();
+    navigate('/');
+    // Wait for navigation, then scroll to the projects section
+    setTimeout(() => {
+      const el = document.getElementById('projects');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
 
   if (!project) {
     return (
@@ -166,13 +179,14 @@ export default function ProjectPage() {
       <div className="max-w-3xl mx-auto px-5 md:px-6 lg:px-10 py-16 md:py-24">
         {/* Back link */}
         <ScrollReveal immediate>
-          <Link
-            to="/#projects"
+          <a
+            href="/#projects"
+            onClick={handleBackClick}
             className="inline-flex items-center gap-1.5 text-fg-dim text-xs hover:text-accent transition-colors mb-10"
           >
             <ArrowLeft size={12} />
             back to projects
-          </Link>
+          </a>
         </ScrollReveal>
 
         {/* Header */}
