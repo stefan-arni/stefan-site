@@ -2,20 +2,19 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const COMMANDS = {
-  help: () => ({ type: 'text', content: 'available commands: help, about, projects, experience, contact, email, github, linkedin, resume, coffee, hire me, iceland, aurora' }),
+  help: () => ({ type: 'text', content: 'available commands: help, about, projects, experience, contact, email, github, linkedin, resume, coffee, hire me, iceland' }),
   about: () => ({ type: 'scroll', target: 'about' }),
   projects: () => ({ type: 'scroll', target: 'projects' }),
   experience: () => ({ type: 'scroll', target: 'experience' }),
   contact: () => ({ type: 'link', href: 'mailto:sa2467@cornell.edu' }),
   email: () => ({ type: 'link', href: 'mailto:sa2467@cornell.edu' }),
   github: () => ({ type: 'external', href: 'https://github.com/stefan-arni' }),
-  linkedin: () => ({ type: 'external', href: 'https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354' }),
+  linkedin: () => ({ type: 'external', href: 'https://www.linkedin.com/in/stef%C3%A1n-%C3%A1rni-arnarsson-5129ab354' }),
   resume: () => ({ type: 'external', href: '/resume.pdf' }),
   cv: () => ({ type: 'external', href: '/resume.pdf' }),
   coffee: () => ({ type: 'text', content: 'always.' }),
   'hire me': () => ({ type: 'html', content: '<a href="mailto:sa2467@cornell.edu" class="text-accent hover:underline">sa2467@cornell.edu</a> — let\'s talk.' }),
   iceland: () => ({ type: 'text', content: 'where i built ml for 87% of a country' }),
-  aurora: () => ({ type: 'text', content: "you're looking at it" }),
 };
 
 export default function CommandPalette() {
@@ -94,22 +93,20 @@ export default function CommandPalette() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
         >
-          {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-fg/10 backdrop-blur-sm"
             onClick={handleClose}
           />
 
-          {/* Modal */}
           <motion.div
-            className="relative w-full max-w-[500px] mx-4 bg-bg-card border border-purple rounded-lg overflow-hidden shadow-2xl"
+            className="relative w-full max-w-[500px] mx-4 bg-bg-card border border-border rounded-xl overflow-hidden shadow-lg"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.15 }}
           >
             <form onSubmit={handleSubmit} className="flex items-center px-4 py-3 border-b border-border">
-              <span className="text-fg-dim font-mono mr-2 select-none">&gt;</span>
+              <span className="text-accent font-mono mr-2 select-none">&gt;</span>
               <input
                 ref={inputRef}
                 type="text"

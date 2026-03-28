@@ -93,11 +93,11 @@ function getTimeGreeting() {
 }
 
 // Ambient aurora glow — positioned absolutely behind content
-function AuroraGlow({ position = 'left', color = 'green', top = '10%', size = '400px', opacity = 0.04 }) {
+function AuroraGlow({ position = 'left', color = 'teal', top = '10%', size = '400px', opacity = 0.04 }) {
   const colors = {
-    green: 'rgba(94, 218, 158,',
-    purple: 'rgba(123, 140, 222,',
-    pink: 'rgba(201, 123, 181,',
+    teal: 'rgba(58, 175, 169,',
+    warm: 'rgba(196, 149, 106,',
+    cool: 'rgba(143, 163, 176,',
   };
   const c = colors[color];
   const posStyle = position === 'left' ? { left: '-10%' } : { right: '-10%' };
@@ -122,7 +122,7 @@ function SectionLabel({ children }) {
   return (
     <div className="flex items-center gap-4 mb-8">
       <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg-dimmer">{children}</span>
-      <div className="flex-1 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, rgba(94,218,158,0.15) 0%, rgba(123,140,222,0.12) 50%, rgba(201,123,181,0.08) 80%, transparent 100%)' }} />
+      <div className="flex-1 h-[1px] rounded-full" style={{ background: 'linear-gradient(90deg, rgba(58,175,169,0.2) 0%, rgba(196,149,106,0.12) 50%, transparent 100%)' }} />
     </div>
   );
 }
@@ -239,7 +239,7 @@ function HomePage() {
 
         {/* ─── ABOUT ────────────────────────────────────────────────────── */}
         <section id="about" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="right" color="purple" top="-10%" size="500px" opacity={0.045} />
+          <AuroraGlow position="right" color="teal" top="-10%" size="500px" opacity={0.035} />
           <div className="max-w-7xl mx-auto relative z-[1]">
             <ScrollReveal>
               <SectionLabel>about</SectionLabel>
@@ -278,8 +278,8 @@ function HomePage() {
 
         {/* ─── EXPERIENCE ───────────────────────────────────────────────── */}
         <section id="experience" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="green" top="20%" size="450px" opacity={0.04} />
-          <AuroraGlow position="right" color="pink" top="60%" size="350px" opacity={0.035} />
+          <AuroraGlow position="left" color="teal" top="20%" size="450px" opacity={0.03} />
+          <AuroraGlow position="right" color="warm" top="60%" size="350px" opacity={0.025} />
           <div className="max-w-7xl mx-auto relative z-[1]">
             <ScrollReveal>
               <SectionLabel>experience</SectionLabel>
@@ -324,8 +324,8 @@ function HomePage() {
 
         {/* ─── PROJECTS ─────────────────────────────────────────────────── */}
         <section id="projects" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="purple" top="0%" size="400px" opacity={0.04} />
-          <AuroraGlow position="right" color="green" top="50%" size="350px" opacity={0.035} />
+          <AuroraGlow position="left" color="cool" top="0%" size="400px" opacity={0.03} />
+          <AuroraGlow position="right" color="teal" top="50%" size="350px" opacity={0.025} />
           <div className="max-w-7xl mx-auto relative z-[1]">
             <ScrollReveal>
               <SectionLabel>projects</SectionLabel>
@@ -345,10 +345,10 @@ function HomePage() {
                         ) : (
                           <>
                             <span
-                              className="w-1.5 h-1.5 rounded-full bg-pink"
+                              className="w-1.5 h-1.5 rounded-full bg-warm"
                               style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
                             />
-                            <span className="font-mono text-[11px] text-pink">building</span>
+                            <span className="font-mono text-[11px] text-warm">building</span>
                           </>
                         )}
                       </div>
@@ -403,7 +403,7 @@ function HomePage() {
 
         {/* ─── EDUCATION ────────────────────────────────────────────────── */}
         <section className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="right" color="pink" top="10%" size="380px" opacity={0.035} />
+          <AuroraGlow position="right" color="warm" top="10%" size="380px" opacity={0.025} />
           <div className="max-w-7xl mx-auto relative z-[1]">
             <ScrollReveal>
               <SectionLabel>education</SectionLabel>
@@ -430,7 +430,7 @@ function HomePage() {
 
         {/* ─── NOW ──────────────────────────────────────────────────────── */}
         <section className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="purple" top="-20%" size="350px" opacity={0.04} />
+          <AuroraGlow position="left" color="cool" top="-20%" size="350px" opacity={0.03} />
           <div className="max-w-7xl mx-auto relative z-[1]">
             <ScrollReveal>
               <SectionLabel>now</SectionLabel>
@@ -456,7 +456,7 @@ function HomePage() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-fg-dimmer font-mono">
             <p>
               built with mass amounts of coffee and claude code · nyc 2026 ·{' '}
-              <span className="text-purple/40 hidden md:inline">press cmd+k</span>
+              <span className="text-cool/50 hidden md:inline">press cmd+k</span>
             </p>
             <div className="flex items-center gap-4">
               <a href="mailto:sa2467@cornell.edu" className="hover:text-accent transition-colors">sa2467@cornell.edu</a>
