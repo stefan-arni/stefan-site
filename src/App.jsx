@@ -1,152 +1,103 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, FileText, ArrowDown } from 'lucide-react';
+import { Github, Linkedin, Mail, FileText, ArrowRight, ExternalLink, Lock } from 'lucide-react';
 
 import AuroraCanvas from './components/AuroraCanvas';
 import CursorTrail from './components/CursorTrail';
 import CommandPalette from './components/CommandPalette';
 import Nav from './components/Nav';
 import ScrollReveal from './components/ScrollReveal';
-import AuroraReveal from './components/AuroraReveal';
-import CountUp from './components/CountUp';
 import ProjectPage from './pages/ProjectPage';
 import PROJECTS from './data/projects';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const LINKS = [
-  { label: 'GitHub', icon: Github, href: 'https://github.com/stefan-arni' },
-  { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354' },
-  { label: 'Email', icon: Mail, href: 'mailto:sa2467@cornell.edu' },
-  { label: 'Resume', icon: FileText, href: '/resume.pdf' },
-];
-
-const EXPERIENCE = [
-  {
-    title: 'ML Researcher',
-    company: 'Cornell Tech / Weill Cornell Medicine',
-    lab: 'Sabuncu Lab',
-    labUrl: 'https://sabuncu.engineering.cornell.edu',
-    date: 'Jan 2026 - Present',
-    location: 'New York, NY',
-    description:
-      'Building an nnU-Net liver MRI segmentation pipeline for clinical implementation and downstream volumetry. Reproducible training and inference workflows, evaluation with Dice and surface distance metrics, error analysis. The goal is a pipeline that\'s ready for real clinical use.',
-    tags: ['PyTorch', 'nnU-Net', 'Medical Imaging'],
-  },
-  {
-    title: 'Clinical ML Engineer',
-    company: 'National University Hospital of Iceland',
-    lab: 'Landspitali',
-    labUrl: 'https://www.linkedin.com/company/landspitali-university-hospital/?originalSubdomain=is',
-    date: 'May 2024 - Aug 2025',
-    location: 'Reykjavik, Iceland',
-    description:
-      'Built a 30-day readmission risk prediction model from scratch using 15 years of inpatient records covering ~87% of Iceland\'s population. End-to-end XGBoost pipeline: data ingestion, feature engineering, leakage-proof evaluation, threshold tuning. Deployed as a live risk scoring tool across 9 hospital wards. Patients in the red band were 5.3x more likely to be readmitted within 30 days. Every prediction includes SHAP explainability.',
-    highlight: true,
-    tags: ['XGBoost', 'SHAP', 'Clinical NLP', 'Production ML'],
-  },
-];
-
-
-const STACK = {
-  'Languages': ['Python', 'TypeScript', 'SQL', 'C/C++', 'Bash'],
-  'ML/AI': ['PyTorch', 'TensorFlow', 'scikit-learn', 'XGBoost', 'nnU-Net', 'TotalSegmentator', 'Transformers', 'SHAP', 'Pandas', 'NumPy'],
-  'LLM/NLP': ['RAG Systems', 'Agentic AI', 'LLM Function Calling', 'Prompt Engineering', 'Structured Output Parsing', 'Gemini API', 'OpenAI API'],
-  'Infrastructure': ['Cloudflare Workers/D1/Pages', 'FastAPI', 'React', 'Vite', 'Slurm/HPC', 'CUDA', 'Git', 'Jupyter/Colab'],
-  'Methods': ['Medical Image Segmentation', 'Tabular Modeling', 'Clinical NLP', 'Computer Vision', 'Explainability', 'Calibration', 'Spaced Repetition'],
+const LINKS = {
+  github: 'https://github.com/stefan-arni',
+  linkedin: 'https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354',
+  email: 'mailto:sa2467@cornell.edu',
+  resume: '/resume.pdf',
 };
 
-const EDUCATION = [
+const PROOF_POINTS = [
+  'Deployed clinical ML across 9 hospital wards in Iceland',
+  'Medical imaging research at Weill Cornell Medicine / Sabuncu Lab',
+  'Built full-stack AI products with RAG, agents, and workflow logic',
+];
+
+const FOCUS_AREAS = [
   {
-    school: 'Cornell University, Cornell Tech',
-    degree: 'MEng in Electrical and Computer Engineering',
-    gpa: '3.91',
-    detail: 'Applied ML · Computer Vision · NLP · Generative Models · ML Hardware & Systems',
-    years: '2025 - 2026',
+    title: 'Clinical ML & Healthcare',
+    description: 'End-to-end ML pipelines for clinical workflows — from retrospective data to production risk scoring. Experience with real hospital adoption, explainability requirements, and regulatory constraints.',
   },
   {
-    school: 'University of Iceland',
-    degree: 'BS in Electrical and Computer Engineering',
-    gpa: '3.93',
-    detail: 'Full Undergraduate Scholarship · ML · Probabilistic Methods · Embedded Systems',
-    years: '2022 - 2025',
+    title: 'Medical Imaging & Computer Vision',
+    description: 'Segmentation and analysis pipelines for clinical imaging. Working with nnU-Net, volumetric evaluation, and reproducible research workflows on HPC infrastructure.',
+  },
+  {
+    title: 'Applied LLM Systems & AI Products',
+    description: 'Full-stack AI products where the LLM is a component of a larger system — RAG retrieval, agentic tool use, learner modeling, structured output, and real-time streaming.',
   },
 ];
 
-const ABOUT_CARDS = [
-  { label: 'Location', value: 'New York, NY' },
-  { label: 'Education', value: 'MEng ECE, Cornell Tech' },
-  { label: 'Focus', value: 'Applied ML, Computer Vision, NLP' },
-  { label: 'Status', value: 'Looking for MLE roles — May 2026' },
-];
+const FEATURED_PROJECTS = PROJECTS.filter((p) => p.featured).sort((a, b) => a.order - b.order);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function getTimeGreeting() {
-  const h = new Date().getHours();
-  if (h >= 6 && h < 11) return 'probably drinking coffee before class. or sleeping through my alarm. either way:';
-  if (h >= 11 && h < 17) return 'probably in class, in the lab, or at a coffee shop. anyway:';
-  if (h >= 17 && h < 22) return 'probably working on side projects or pretending to do leetcode. currently:';
-  if (h >= 22 || h < 2) return 'definitely up too late. probably coding. currently:';
-  return "okay this is late even for me. but if you're here:";
-}
-
-// Ambient aurora glow — positioned absolutely behind content
-function AuroraGlow({ position = 'left', color = 'teal', top = '10%', size = '400px', opacity = 0.04 }) {
-  const colors = {
-    teal: 'rgba(58, 175, 169,',
-    warm: 'rgba(196, 149, 106,',
-    cool: 'rgba(143, 163, 176,',
-  };
-  const c = colors[color];
-  const posStyle = position === 'left' ? { left: '-10%' } : { right: '-10%' };
-
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        ...posStyle,
-        top,
-        width: size,
-        height: size,
-        background: `radial-gradient(ellipse at center, ${c}${opacity}) 0%, ${c}0) 70%)`,
-        filter: 'blur(60px)',
-        zIndex: 0,
-      }}
-    />
-  );
-}
-
 function SectionLabel({ children }) {
   return (
-    <div className="flex items-center gap-4 mb-8">
-      <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg-dimmer">{children}</span>
-      <div className="flex-1 h-[1px] rounded-full" style={{ background: 'linear-gradient(90deg, rgba(58,175,169,0.2) 0%, rgba(196,149,106,0.12) 50%, transparent 100%)' }} />
+    <div className="flex items-center gap-4 mb-10">
+      <span className="font-mono text-label uppercase tracking-[0.08em] text-fg-dimmer">{children}</span>
+      <div className="flex-1 h-[1px] bg-border" />
     </div>
   );
 }
 
 function Tag({ children }) {
   return (
-    <span className="inline-block font-mono text-[11px] px-2 py-0.5 border border-border rounded text-fg-dim hover:border-accent hover:text-accent hover:bg-accent-dim transition-all cursor-default">
+    <span className="inline-block font-mono text-[11px] px-2 py-0.5 border border-border rounded text-fg-dim">
       {children}
     </span>
   );
 }
 
-// ─── App ──────────────────────────────────────────────────────────────────────
+function VisibilityBadge({ visibility }) {
+  if (visibility === 'public') return null;
+  return (
+    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-0.5 border border-border rounded text-fg-dimmer">
+      <Lock size={10} />
+      {visibility === 'sanitized' ? 'Public-safe summary' : 'Private'}
+    </span>
+  );
+}
+
+function StatusDot({ status }) {
+  if (status === 'shipped') {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-success" />
+        <span className="font-mono text-[11px] text-success">Shipped</span>
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-warning" style={{ animation: 'pulse-dot 2s ease-in-out infinite' }} />
+      <span className="font-mono text-[11px] text-warning">In progress</span>
+    </span>
+  );
+}
+
+// ─── Scroll Management ───────────────────────────────────────────────────────
 
 function ScrollToHash() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     if (hash) {
-      // Wait a tick for the DOM to render, then scroll to the hash target
       setTimeout(() => {
         const el = document.getElementById(hash.replace('#', ''));
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 50);
     } else {
       window.scrollTo(0, 0);
@@ -161,313 +112,340 @@ function NotFound() {
       <p className="font-display text-[8rem] md:text-[10rem] font-bold leading-none text-fg/10">
         404
       </p>
-      <p className="text-fg-dim text-sm mb-6 -mt-2">page not found</p>
-      <Link
-        to="/"
-        className="font-mono text-xs text-accent hover:underline transition-colors"
-      >
-        &larr; back home
+      <p className="text-fg-dim text-sm mb-6 -mt-2">Page not found</p>
+      <Link to="/" className="font-mono text-xs text-accent hover:underline transition-colors">
+        &larr; Back home
       </Link>
     </div>
   );
 }
 
+// ─── Featured Project Card ───────────────────────────────────────────────────
+
+function FeaturedCard({ project }) {
+  return (
+    <Link to={`/projects/${project.slug}`} className="block group">
+      <div className="project-card card-hover relative bg-bg-card border border-border rounded-[var(--radius-card)] p-6 md:p-7 overflow-hidden h-full flex flex-col">
+        <div className="flex items-center gap-3 mb-4">
+          <StatusDot status={project.status} />
+          <span className="font-mono text-[11px] text-fg-dimmer">{project.category}</span>
+          <VisibilityBadge visibility={project.visibility} />
+        </div>
+
+        <h3 className="font-display text-headline-md font-semibold text-fg mb-2 tracking-tight leading-tight">
+          {project.title}
+        </h3>
+
+        <p className="text-fg-dim text-body-sm leading-relaxed mb-4 flex-1">
+          {project.oneLiner}
+        </p>
+
+        {project.metrics && project.metrics.length > 0 && project.allowMetrics && (
+          <div className="flex flex-wrap gap-x-5 gap-y-1 mb-4 py-3 border-t border-border">
+            {project.metrics.slice(0, 3).map((m, i) => (
+              <div key={i} className="flex items-baseline gap-1.5">
+                <span className="font-display text-lg font-semibold text-fg">{m.value}</span>
+                <span className="font-mono text-[10px] text-fg-dimmer uppercase tracking-wider">{m.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.slice(0, 4).map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </div>
+          <span className="text-fg-dimmer group-hover:text-accent transition-colors">
+            <ArrowRight size={16} />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// ─── Home Page ────────────────────────────────────────────────────────────────
+
 function HomePage() {
   return (
+    <div className="relative z-10">
 
-      <div className="relative z-10">
-        {/* ─── HERO ─────────────────────────────────────────────────────── */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center px-5 md:px-6 lg:px-10">
-          <div className="max-w-7xl w-full">
-            <ScrollReveal immediate>
-              <p className="text-xs tracking-[0.1em] text-fg-dimmer mb-5">
-                ml engineer · nyc · from reykjavik
-              </p>
-            </ScrollReveal>
+      {/* ─── HERO ─────────────────────────────────────────────── */}
+      <section className="relative min-h-[90vh] flex flex-col justify-center px-5 md:px-6 lg:px-10 pt-20 pb-16">
+        <div className="max-w-4xl mx-auto w-full">
+          <ScrollReveal immediate>
+            <p className="font-mono text-label uppercase tracking-[0.08em] text-fg-dimmer mb-5">
+              Applied ML Engineer · NYC
+            </p>
+          </ScrollReveal>
 
-            <ScrollReveal delay={0.1} immediate>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-fg mb-3">
-                hey, i'm stefan
-              </h1>
-            </ScrollReveal>
+          <ScrollReveal delay={0.1} immediate>
+            <h1 className="font-display text-display-xl font-bold text-fg mb-4 leading-[var(--leading-display)] tracking-[var(--tracking-display)]">
+              Stefan Arnarsson
+            </h1>
+          </ScrollReveal>
 
-            <ScrollReveal delay={0.2} immediate>
-              <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-fg mb-5 min-h-[1.3em]">
-                <AuroraReveal
-                  text="I build ML that actually ships."
-                  highlightWord="ships."
-                  delay={0.8}
-                  onDone={() => {}}
-                />
-              </h2>
-            </ScrollReveal>
+          <ScrollReveal delay={0.2} immediate>
+            <p className="text-fg-dim text-body-lg leading-[1.68] max-w-2xl mb-8">
+              Applied ML engineer building healthcare AI and real-world LLM systems. Cornell master's, previously deployed clinical ML across 9 hospital wards in Iceland. Interested in work where models meet real workflows.
+            </p>
+          </ScrollReveal>
 
-            <ScrollReveal delay={0.3} immediate>
-              <p className="text-fg-dim text-sm md:text-base max-w-xl mb-7 leading-relaxed">
-                cornell tech meng · previously deployed clinical ml across 9 hospital wards in iceland · now building things in agentic ai and fine-tuning
-              </p>
-            </ScrollReveal>
+          <ScrollReveal delay={0.3} immediate>
+            <div className="flex flex-wrap gap-3 mb-12">
+              <a
+                href="#work"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors"
+              >
+                View work
+                <ArrowRight size={14} />
+              </a>
+              <a
+                href={LINKS.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border text-sm text-fg-dim hover:border-accent hover:text-accent transition-all"
+              >
+                <FileText size={14} />
+                Resume
+              </a>
+              <a
+                href={LINKS.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border text-sm text-fg-dim hover:border-accent hover:text-accent transition-all"
+              >
+                <Linkedin size={14} />
+                LinkedIn
+              </a>
+              <a
+                href={LINKS.email}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border text-sm text-fg-dim hover:border-accent hover:text-accent transition-all"
+              >
+                <Mail size={14} />
+                Contact
+              </a>
+            </div>
+          </ScrollReveal>
 
-            <ScrollReveal delay={0.4} immediate>
-              <div className="flex flex-wrap gap-2.5 mb-16">
-                {LINKS.map(({ label, icon: Icon, href }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target={href.startsWith('http') ? '_blank' : undefined}
-                    rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs text-fg-dim hover:border-accent hover:text-accent hover:bg-accent-glow transition-all"
-                  >
-                    <Icon size={13} />
-                    {label}
-                  </a>
-                ))}
-              </div>
-            </ScrollReveal>
+          <ScrollReveal delay={0.4} immediate>
+            <div className="space-y-2.5">
+              {PROOF_POINTS.map((point, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <span className="w-1 h-1 rounded-full bg-accent mt-2 shrink-0" />
+                  <p className="text-fg-dim text-body-sm">{point}</p>
+                </div>
+              ))}
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.5} immediate>
+            <div className="flex items-center gap-4 mt-10">
+              <a href={LINKS.github} target="_blank" rel="noopener noreferrer" className="text-fg-dimmer hover:text-accent transition-colors" aria-label="GitHub">
+                <Github size={18} />
+              </a>
+              <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-dimmer hover:text-accent transition-colors" aria-label="LinkedIn">
+                <Linkedin size={18} />
+              </a>
+              <a href={LINKS.email} className="text-fg-dimmer hover:text-accent transition-colors" aria-label="Email">
+                <Mail size={18} />
+              </a>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ─── SELECTED WORK ────────────────────────────────────── */}
+      <section id="work" className="py-16 md:py-24 px-5 md:px-6 lg:px-10">
+        <div className="max-w-5xl mx-auto">
+          <ScrollReveal>
+            <SectionLabel>Selected Work</SectionLabel>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {FEATURED_PROJECTS.map((proj, i) => (
+              <ScrollReveal key={proj.slug} delay={i * 0.08}>
+                <FeaturedCard project={proj} />
+              </ScrollReveal>
+            ))}
           </div>
 
-          <div className="absolute bottom-8 flex flex-col items-center gap-2 text-fg-dimmer">
-            <span className="text-[10px] tracking-wider text-fg-dimmer/60">scroll</span>
-            <motion.div
-              animate={{ y: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <ArrowDown size={14} />
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ─── ABOUT ────────────────────────────────────────────────────── */}
-        <section id="about" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="right" color="teal" top="-10%" size="500px" opacity={0.035} />
-          <div className="max-w-7xl mx-auto relative z-[1]">
-            <ScrollReveal>
-              <SectionLabel>about</SectionLabel>
-            </ScrollReveal>
-
-            <div className="grid md:grid-cols-[1fr_280px] gap-10">
-              <div className="space-y-4">
-                <ScrollReveal>
-                  <p className="text-fg text-base font-medium">ML engineer who likes to ship things.</p>
-                </ScrollReveal>
-                <ScrollReveal delay={0.1}>
-                  <p className="text-fg-dim text-sm leading-relaxed">
-                    At Iceland's National University Hospital, I built a 30-day readmission risk model on 15 years of patient records covering roughly 87% of the country's population. It's live in 9 wards today. Co-designed the UI with the care team because a model nobody trusts is a model nobody uses.
-                  </p>
-                </ScrollReveal>
-                <ScrollReveal delay={0.2}>
-                  <p className="text-fg-dim text-sm leading-relaxed">
-                    Now I'm at Cornell Tech doing medical image segmentation research at Weill Cornell Medicine, and building side projects in agentic AI and LLM fine-tuning.
-                  </p>
-                </ScrollReveal>
-              </div>
-
-              <div className="space-y-2.5">
-                {ABOUT_CARDS.map((card, i) => (
-                  <ScrollReveal key={card.label} delay={i * 0.08}>
-                    <div className="aurora-border-card bg-bg-card rounded-lg p-3.5">
-                      <p className="font-mono text-[10px] text-fg-dimmer uppercase tracking-wider mb-0.5">{card.label}</p>
-                      <p className="text-fg text-sm">{card.value}</p>
-                    </div>
+          {/* Secondary projects */}
+          {PROJECTS.filter((p) => !p.featured).length > 0 && (
+            <div className="mt-8">
+              <p className="font-mono text-label uppercase tracking-[0.08em] text-fg-dimmer mb-4">Other Projects</p>
+              <div className="grid md:grid-cols-2 gap-3">
+                {PROJECTS.filter((p) => !p.featured).map((proj, i) => (
+                  <ScrollReveal key={proj.slug} delay={i * 0.06}>
+                    <Link to={`/projects/${proj.slug}`} className="block group">
+                      <div className="bg-bg-card border border-border rounded-[14px] p-5 hover:border-border-hover transition-all flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <StatusDot status={proj.status} />
+                          </div>
+                          <h4 className="font-display text-base font-medium text-fg mb-0.5">{proj.title}</h4>
+                          <p className="text-fg-dim text-sm">{proj.oneLiner}</p>
+                        </div>
+                        <ArrowRight size={14} className="text-fg-dimmer group-hover:text-accent transition-colors shrink-0 ml-4" />
+                      </div>
+                    </Link>
                   </ScrollReveal>
                 ))}
               </div>
             </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── FOCUS AREAS ──────────────────────────────────────── */}
+      <section id="focus" className="py-16 md:py-24 px-5 md:px-6 lg:px-10 bg-bg-soft">
+        <div className="max-w-5xl mx-auto">
+          <ScrollReveal>
+            <SectionLabel>What I Work On</SectionLabel>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {FOCUS_AREAS.map((area, i) => (
+              <ScrollReveal key={area.title} delay={i * 0.08}>
+                <div className="bg-bg-card border border-border rounded-[var(--radius-card)] p-6">
+                  <h3 className="font-display text-title-lg font-semibold text-fg mb-3 tracking-[var(--tracking-tight)]">
+                    {area.title}
+                  </h3>
+                  <p className="text-fg-dim text-body-sm leading-relaxed">
+                    {area.description}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ─── EXPERIENCE ───────────────────────────────────────────────── */}
-        <section id="experience" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="teal" top="20%" size="450px" opacity={0.03} />
-          <AuroraGlow position="right" color="warm" top="60%" size="350px" opacity={0.025} />
-          <div className="max-w-7xl mx-auto relative z-[1]">
-            <ScrollReveal>
-              <SectionLabel>experience</SectionLabel>
-            </ScrollReveal>
+      {/* ─── ABOUT ────────────────────────────────────────────── */}
+      <section id="about" className="py-16 md:py-24 px-5 md:px-6 lg:px-10">
+        <div className="max-w-3xl mx-auto">
+          <ScrollReveal>
+            <SectionLabel>About</SectionLabel>
+          </ScrollReveal>
 
-            <div className="space-y-10">
-              {EXPERIENCE.map((exp, i) => (
-                <ScrollReveal key={i} delay={i * 0.1}>
-                  <div className="grid md:grid-cols-[160px_1fr] gap-5 pb-10 border-b border-border last:border-0 last:pb-0">
-                    <div className="font-mono text-[11px] text-fg-dimmer space-y-0.5">
-                      <p>{exp.date}</p>
-                      <p>{exp.location}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-display text-lg font-semibold text-fg mb-0.5">{exp.title}</h3>
-                      <p className="text-sm mb-0.5 text-accent">{exp.company}</p>
-                      {exp.labUrl ? (
-                        <a href={exp.labUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] text-fg-dimmer mb-3 block hover:text-accent transition-colors">{exp.lab}</a>
-                      ) : (
-                        <p className="font-mono text-[11px] text-fg-dimmer mb-3">{exp.lab}</p>
-                      )}
-                      <p className="text-fg-dim text-sm leading-relaxed mb-3">{exp.description}</p>
+          <ScrollReveal delay={0.1}>
+            <div className="space-y-4">
+              <p className="text-fg text-body-lg leading-[1.68] font-medium">
+                Applied ML engineer from Reykjavik, currently finishing a master's at Cornell in New York.
+              </p>
+              <p className="text-fg-dim text-body leading-[var(--leading-body)]">
+                At Iceland's National University Hospital, I built a readmission risk model on 15 years of inpatient records and co-designed its clinical interface with the care team. Now I'm doing medical image segmentation research at Weill Cornell Medicine and building AI products on the side.
+              </p>
+              <p className="text-fg-dim text-body leading-[var(--leading-body)]">
+                I'm drawn to applied ML problems where the hard part isn't the model — it's making the system work in context. Clinical adoption, data quality, evaluation rigor, and building something people actually trust and use.
+              </p>
+            </div>
+          </ScrollReveal>
 
-                      {exp.highlight && (
-                        <div className="inline-block font-mono text-[11px] px-2.5 py-1 rounded-full mb-3 aurora-gradient-text-bg">
-                          <CountUp end={5.3} decimals={1} suffix="x" /> risk stratification · <CountUp end={9} /> wards · live in production
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {exp.tags.map((tag) => (
-                          <Tag key={tag}>{tag}</Tag>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
+          <ScrollReveal delay={0.2}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 pt-8 border-t border-border">
+              {[
+                { label: 'Location', value: 'New York, NY' },
+                { label: 'Education', value: 'MEng ECE, Cornell' },
+                { label: 'Focus', value: 'Applied ML & AI' },
+                { label: 'Status', value: 'Seeking MLE roles — May 2026' },
+              ].map((item) => (
+                <div key={item.label}>
+                  <p className="font-mono text-[11px] text-fg-dimmer uppercase tracking-wider mb-1">{item.label}</p>
+                  <p className="text-fg text-body-sm">{item.value}</p>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
+          </ScrollReveal>
 
-        {/* ─── PROJECTS ─────────────────────────────────────────────────── */}
-        <section id="projects" className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="cool" top="0%" size="400px" opacity={0.03} />
-          <AuroraGlow position="right" color="teal" top="50%" size="350px" opacity={0.025} />
-          <div className="max-w-7xl mx-auto relative z-[1]">
-            <ScrollReveal>
-              <SectionLabel>projects</SectionLabel>
-            </ScrollReveal>
-
-            <div className="grid md:grid-cols-2 gap-3.5">
-              {PROJECTS.map((proj, i) => (
-                <ScrollReveal key={i} delay={i * 0.08}>
-                  <Link to={`/projects/${proj.slug}`} className="block h-full cursor-pointer">
-                    <div className="project-card relative bg-bg-card border border-border rounded-lg p-5 hover:-translate-y-0.5 transition-all overflow-hidden h-full flex flex-col aurora-card-glow">
-                      <div className="flex items-center gap-2 mb-2.5">
-                        {proj.status === 'shipped' ? (
-                          <>
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                            <span className="font-mono text-[11px] text-accent">shipped</span>
-                          </>
-                        ) : (
-                          <>
-                            <span
-                              className="w-1.5 h-1.5 rounded-full bg-warm"
-                              style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
-                            />
-                            <span className="font-mono text-[11px] text-warm">building</span>
-                          </>
-                        )}
-                      </div>
-
-                      <h3 className="font-display text-base font-semibold text-fg mb-1.5">{proj.title}</h3>
-                      <p className="text-fg-dim text-sm leading-relaxed mb-3 flex-1">{proj.description}</p>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {proj.tags.map((tag) => (
-                          <Tag key={tag}>{tag}</Tag>
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── STACK ────────────────────────────────────────────────────── */}
-        <section className="py-12 md:py-16 px-5 md:px-6 lg:px-10">
-          <div className="max-w-7xl mx-auto">
-            <ScrollReveal>
-              <SectionLabel>stack</SectionLabel>
-            </ScrollReveal>
-
-            <div className="space-y-5">
-              {Object.entries(STACK).map(([category, items], ci) => (
-                <ScrollReveal key={category} delay={ci * 0.08}>
-                  <div>
-                    <p className="font-mono text-[11px] text-fg-dimmer uppercase tracking-wider mb-2">{category}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {items.map((item, i) => (
-                        <motion.div
-                          key={item}
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: ci * 0.08 + i * 0.03, duration: 0.4 }}
-                        >
-                          <Tag>{item}</Tag>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── EDUCATION ────────────────────────────────────────────────── */}
-        <section className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="right" color="warm" top="10%" size="380px" opacity={0.025} />
-          <div className="max-w-7xl mx-auto relative z-[1]">
-            <ScrollReveal>
-              <SectionLabel>education</SectionLabel>
-            </ScrollReveal>
-
-            <div className="space-y-8">
-              {EDUCATION.map((edu, i) => (
-                <ScrollReveal key={i} delay={i * 0.1}>
-                  <div className="grid md:grid-cols-[160px_1fr] gap-5">
-                    <div className="font-mono text-[11px] text-fg-dimmer">
-                      <p>{edu.years}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-display text-base font-semibold text-fg mb-0.5">{edu.school}</h3>
-                      <p className="text-fg-dim text-sm mb-0.5">{edu.degree} · GPA {edu.gpa}</p>
-                      <p className="text-fg-dimmer text-xs">{edu.detail}</p>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── NOW ──────────────────────────────────────────────────────── */}
-        <section className="relative py-12 md:py-16 px-5 md:px-6 lg:px-10 overflow-hidden">
-          <AuroraGlow position="left" color="cool" top="-20%" size="350px" opacity={0.03} />
-          <div className="max-w-7xl mx-auto relative z-[1]">
-            <ScrollReveal>
-              <SectionLabel>now</SectionLabel>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.1}>
-              <p className="text-fg-dim italic text-sm mb-5">{getTimeGreeting()}</p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2}>
-              <div className="aurora-border-card bg-bg-card rounded-lg p-5 md:p-6">
-                <p className="text-fg text-sm leading-relaxed">
-                  finishing my meng at cornell tech. building an icelandic language tutor that nobody asked for. mass applying to MLE roles. mass solving leetcode. trying to wake up at 7:30am. it's going okay.
-                </p>
-                <p className="text-fg-dimmer text-[11px] font-mono mt-3">last updated march 2026</p>
+          <ScrollReveal delay={0.3}>
+            <div className="grid md:grid-cols-2 gap-3 mt-6">
+              <div className="flex items-center gap-4 py-3.5 px-5 rounded-[14px] bg-bg-soft border border-border">
+                <div className="flex-1">
+                  <p className="text-fg text-body-sm font-medium">Cornell University</p>
+                  <p className="text-fg-dim text-[13px]">Master's in Electrical & Computer Engineering · GPA 3.91</p>
+                </div>
+                <span className="font-mono text-[11px] text-fg-dimmer shrink-0">2025–2026</span>
               </div>
-            </ScrollReveal>
-          </div>
-        </section>
-
-        {/* ─── FOOTER ───────────────────────────────────────────────────── */}
-        <footer id="contact" className="border-t border-border py-6 px-5 md:px-6 lg:px-10">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-fg-dimmer font-mono">
-            <p>
-              built with mass amounts of coffee and claude code · nyc 2026 ·{' '}
-              <span className="text-cool/50 hidden md:inline">press cmd+k</span>
-            </p>
-            <div className="flex items-center gap-4">
-              <a href="mailto:sa2467@cornell.edu" className="hover:text-accent transition-colors">sa2467@cornell.edu</a>
-              <a href="https://github.com/stefan-arni" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">GitHub</a>
-              <a href="https://www.linkedin.com/in/stefán-árni-arnarsson-5129ab354" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
+              <div className="flex items-center gap-4 py-3.5 px-5 rounded-[14px] bg-bg-soft border border-border">
+                <div className="flex-1">
+                  <p className="text-fg text-body-sm font-medium">University of Iceland</p>
+                  <p className="text-fg-dim text-[13px]">BS Electrical & Computer Engineering · GPA 3.93 · Full Scholarship</p>
+                </div>
+                <span className="font-mono text-[11px] text-fg-dimmer shrink-0">2022–2025</span>
+              </div>
             </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ─── CONTACT CTA ──────────────────────────────────────── */}
+      <section id="contact" className="py-16 md:py-24 px-5 md:px-6 lg:px-10 bg-bg-soft">
+        <div className="max-w-3xl mx-auto text-center">
+          <ScrollReveal>
+            <h2 className="font-display text-headline-lg font-semibold text-fg mb-4 tracking-[var(--tracking-tight)]">
+              Let's talk
+            </h2>
+            <p className="text-fg-dim text-body-lg mb-8 max-w-lg mx-auto">
+              Open to ML engineering roles, research collaborations, and interesting applied AI problems.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.1}>
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              <a
+                href={LINKS.email}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors"
+              >
+                <Mail size={16} />
+                sa2467@cornell.edu
+              </a>
+              <a
+                href={LINKS.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-sm text-fg-dim hover:border-accent hover:text-accent transition-all"
+              >
+                <FileText size={16} />
+                Resume
+              </a>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.2}>
+            <div className="flex justify-center items-center gap-5">
+              <a href={LINKS.github} target="_blank" rel="noopener noreferrer" className="text-fg-dimmer hover:text-accent transition-colors" aria-label="GitHub">
+                <Github size={20} />
+              </a>
+              <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-dimmer hover:text-accent transition-colors" aria-label="LinkedIn">
+                <Linkedin size={20} />
+              </a>
+              <a href={LINKS.email} className="text-fg-dimmer hover:text-accent transition-colors" aria-label="Email">
+                <Mail size={20} />
+              </a>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ───────────────────────────────────────────── */}
+      <footer className="border-t border-border py-6 px-5 md:px-6 lg:px-10">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-fg-dimmer font-mono">
+          <p>Stefan Arnarsson · NYC 2026</p>
+          <div className="flex items-center gap-4">
+            <a href={LINKS.email} className="hover:text-accent transition-colors">sa2467@cornell.edu</a>
+            <a href={LINKS.github} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">GitHub</a>
+            <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
+    </div>
   );
 }
+
+// ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
   return (

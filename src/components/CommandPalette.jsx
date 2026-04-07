@@ -2,19 +2,16 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const COMMANDS = {
-  help: () => ({ type: 'text', content: 'available commands: help, about, projects, experience, contact, email, github, linkedin, resume, coffee, hire me, iceland' }),
+  help: () => ({ type: 'text', content: 'Available commands: help, work, about, contact, email, github, linkedin, resume' }),
+  work: () => ({ type: 'scroll', target: 'work' }),
+  projects: () => ({ type: 'scroll', target: 'work' }),
   about: () => ({ type: 'scroll', target: 'about' }),
-  projects: () => ({ type: 'scroll', target: 'projects' }),
-  experience: () => ({ type: 'scroll', target: 'experience' }),
   contact: () => ({ type: 'link', href: 'mailto:sa2467@cornell.edu' }),
   email: () => ({ type: 'link', href: 'mailto:sa2467@cornell.edu' }),
   github: () => ({ type: 'external', href: 'https://github.com/stefan-arni' }),
   linkedin: () => ({ type: 'external', href: 'https://www.linkedin.com/in/stef%C3%A1n-%C3%A1rni-arnarsson-5129ab354' }),
   resume: () => ({ type: 'external', href: '/resume.pdf' }),
   cv: () => ({ type: 'external', href: '/resume.pdf' }),
-  coffee: () => ({ type: 'text', content: 'always.' }),
-  'hire me': () => ({ type: 'html', content: '<a href="mailto:sa2467@cornell.edu" class="text-accent hover:underline">sa2467@cornell.edu</a> — let\'s talk.' }),
-  iceland: () => ({ type: 'text', content: 'where i built ml for 87% of a country' }),
 };
 
 export default function CommandPalette() {
@@ -34,25 +31,18 @@ export default function CommandPalette() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setOpen((v) => {
-          if (v) {
-            handleClose();
-            return false;
-          }
+          if (v) { handleClose(); return false; }
           return true;
         });
       }
-      if (e.key === 'Escape' && open) {
-        handleClose();
-      }
+      if (e.key === 'Escape' && open) handleClose();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, handleClose]);
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (open) setTimeout(() => inputRef.current?.focus(), 50);
   }, [open]);
 
   const handleSubmit = (e) => {
@@ -62,7 +52,7 @@ export default function CommandPalette() {
 
     const handler = COMMANDS[cmd];
     if (!handler) {
-      setResponse({ type: 'text', content: 'command not found. type help for options.' });
+      setResponse({ type: 'text', content: 'Command not found. Type help for options.' });
       return;
     }
 
@@ -93,13 +83,11 @@ export default function CommandPalette() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
         >
-          <div
-            className="absolute inset-0 bg-fg/10 backdrop-blur-sm"
-            onClick={handleClose}
-          />
+          <div className="absolute inset-0 bg-fg/10 backdrop-blur-sm" onClick={handleClose} />
 
           <motion.div
-            className="relative w-full max-w-[500px] mx-4 bg-bg-card border border-border rounded-xl overflow-hidden shadow-lg"
+            className="relative w-full max-w-[480px] mx-4 bg-bg-card border border-border rounded-[14px] overflow-hidden"
+            style={{ boxShadow: 'var(--shadow-card)' }}
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -113,7 +101,7 @@ export default function CommandPalette() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="flex-1 bg-transparent text-fg font-mono text-sm outline-none placeholder:text-fg-dimmer"
-                placeholder="type a command..."
+                placeholder="Type a command..."
                 autoComplete="off"
                 spellCheck={false}
               />
@@ -122,14 +110,7 @@ export default function CommandPalette() {
 
             {response && (
               <div className="px-4 py-3">
-                {response.type === 'html' ? (
-                  <p
-                    className="font-mono text-sm text-accent"
-                    dangerouslySetInnerHTML={{ __html: response.content }}
-                  />
-                ) : (
-                  <p className="font-mono text-sm text-accent">{response.content}</p>
-                )}
+                <p className="font-mono text-sm text-accent">{response.content}</p>
               </div>
             )}
           </motion.div>

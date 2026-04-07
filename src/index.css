@@ -1,25 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #FAFAF7;
+  --color-bg: #F6F7F8;
   --color-bg-card: #FFFFFF;
-  --color-border: #E8E5DF;
-  --color-border-hover: #D1CEC7;
-  --color-fg: #1A1A1E;
-  --color-fg-dim: #6B6B70;
-  --color-fg-dimmer: #A8A8AD;
-  --color-accent: #3AAFA9;
-  --color-accent-dim: rgba(58, 175, 169, 0.08);
-  --color-accent-glow: rgba(58, 175, 169, 0.04);
-  --color-warm: #C4956A;
-  --color-warm-dim: rgba(196, 149, 106, 0.1);
-  --color-warm-glow: rgba(196, 149, 106, 0.06);
-  --color-cool: #8FA3B0;
-  --color-cool-dim: rgba(143, 163, 176, 0.1);
-  --color-cool-glow: rgba(143, 163, 176, 0.06);
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --color-bg-soft: #F1F3F5;
+
+  --color-border: #D7DCE4;
+  --color-border-hover: #C2C9D3;
+
+  --color-fg: #16181D;
+  --color-fg-dim: #5B6370;
+  --color-fg-dimmer: #8C95A3;
+
+  --color-accent: #4F6B8A;
+  --color-accent-hover: #425A75;
+  --color-accent-dim: rgba(79, 107, 138, 0.10);
+  --color-accent-glow: rgba(79, 107, 138, 0.06);
+
+  --color-success: #2F6A5E;
+  --color-warning: #8A6B47;
+  --color-danger: #8A4C4C;
+
+  --font-display: 'Inter Tight', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+
+  --text-display-xl: clamp(3rem, 6.2vw, 4.75rem);
+  --text-display-lg: clamp(2.375rem, 4.5vw, 3.5rem);
+  --text-headline-lg: 2rem;
+  --text-headline-md: 1.5rem;
+  --text-title-lg: 1.125rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.9375rem;
+  --text-label: 0.75rem;
+
+  --leading-display: 0.96;
+  --leading-headline: 1.05;
+  --leading-body: 1.62;
+  --leading-body-loose: 1.75;
+
+  --tracking-display: -0.032em;
+  --tracking-tight: -0.018em;
+  --tracking-label: 0.08em;
+
+  --radius-card: 18px;
+  --radius-button: 999px;
+
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 10px 32px rgba(16, 24, 40, 0.04);
+  --shadow-card-hover: 0 2px 6px rgba(16, 24, 40, 0.06), 0 16px 40px rgba(16, 24, 40, 0.06);
 }
 
 *, *::before, *::after {
@@ -34,6 +63,8 @@ body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -61,19 +92,13 @@ body {
   background: var(--color-fg-dimmer);
 }
 
-/* ─── Cursor blink for typewriter ──────────────────────────────── */
-@keyframes cursor-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-/* ─── Pulsing dot for "building" projects ────────────────────── */
+/* ─── Pulsing dot for "building" status ─────────────────────── */
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
 
-/* ─── Top accent line slide-in on project cards ──────────────── */
+/* ─── Project card hover accent line ────────────────────────── */
 .project-card::before {
   content: '';
   position: absolute;
@@ -81,57 +106,20 @@ body {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-warm));
+  background: var(--color-accent);
   transition: width 0.3s ease;
+  border-radius: 2px 2px 0 0;
 }
 
 .project-card:hover::before {
   width: 100%;
 }
 
-/* ─── Gradient border cards ──────────────────────────────────── */
-.aurora-border-card {
-  position: relative;
-  border: 1px solid var(--color-border);
+/* ─── Card hover shadow ─────────────────────────────────────── */
+.card-hover {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.aurora-border-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-warm));
-  opacity: 0.4;
-  border-radius: 2px 2px 0 0;
-  transition: opacity 0.3s ease;
-}
-
-.aurora-border-card:hover::after {
-  opacity: 0.8;
-}
-
-/* ─── Project card soft shadow on hover ──────────────────────── */
-.aurora-card-glow {
-  position: relative;
-  transition: box-shadow 0.4s ease;
-}
-
-.aurora-card-glow:hover {
-  box-shadow: 0 8px 30px rgba(58, 175, 169, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* ─── Gradient text (for "ships." highlight) ─────────────────── */
-.aurora-gradient-text {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-warm) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ─── Gradient background for highlight pills ────────────────── */
-.aurora-gradient-text-bg {
-  background: linear-gradient(90deg, rgba(58, 175, 169, 0.1) 0%, rgba(196, 149, 106, 0.08) 100%);
-  color: var(--color-accent);
+.card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
 }

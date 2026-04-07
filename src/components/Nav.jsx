@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 
 const NAV_ITEMS = [
-  { label: 'about', href: '#about' },
-  { label: 'experience', href: '#experience' },
-  { label: 'projects', href: '#projects' },
-  { label: 'contact', href: '#contact' },
+  { label: 'Work', href: '#work' },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 export default function Nav() {
@@ -24,11 +23,11 @@ export default function Nav() {
         return;
       }
 
-      const sections = ['about', 'experience', 'projects', 'contact'];
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
+      const sections = ['contact', 'about', 'work'];
+      for (const id of sections) {
+        const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 120) {
-          setActive(sections[i]);
+          setActive(id);
           return;
         }
       }
@@ -41,13 +40,10 @@ export default function Nav() {
 
   const handleNavClick = (e, item) => {
     const section = item.href.replace('#', '');
-
     if (isHome) {
       e.preventDefault();
       const el = document.getElementById(section);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     } else {
       e.preventDefault();
       navigate(`/#${section}`);
@@ -60,27 +56,22 @@ export default function Nav() {
         scrolled ? 'bg-bg/80 backdrop-blur-md border-b border-border' : ''
       }`}
     >
-      <div className="max-w-7xl mx-auto px-5 md:px-6 lg:px-10 flex items-center justify-between h-12">
-        <button
-          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-          className="font-mono text-sm text-fg-dim hover:text-accent transition-colors cursor-pointer"
-          aria-label="Open command palette"
+      <div className="max-w-5xl mx-auto px-5 md:px-6 lg:px-10 flex items-center justify-between h-12">
+        <Link
+          to="/"
+          className="font-display text-sm font-semibold text-fg hover:text-accent transition-colors"
         >
-          <span className="text-accent">&gt;</span>{' '}
-          <span
-            className="inline-block w-[6px] h-[14px] bg-fg-dim/50 align-middle"
-            style={{ animation: 'cursor-blink 1s step-end infinite' }}
-          />
-        </button>
+          Stefan Arnarsson
+        </Link>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-6">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.label}
               href={`/${item.href}`}
               onClick={(e) => handleNavClick(e, item)}
-              className={`text-xs transition-colors ${
-                active === item.label
+              className={`font-body text-[14px] font-medium transition-colors ${
+                active === item.href.replace('#', '')
                   ? 'text-accent'
                   : 'text-fg-dim hover:text-fg'
               }`}

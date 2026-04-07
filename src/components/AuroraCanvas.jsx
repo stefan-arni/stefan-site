@@ -4,6 +4,9 @@ export default function AuroraCanvas() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -16,10 +19,10 @@ export default function AuroraCanvas() {
     resize();
     window.addEventListener('resize', resize);
 
+    // Single muted slate-blue blob — very subtle
     const blobs = [
-      { color: [58, 175, 169], x: 0.25, y: 0.2, radius: 0.35, opacity: 0.045, speedX: 0.008, speedY: 0.006, phaseX: 0, phaseY: 0.5 },
-      { color: [196, 149, 106], x: 0.7, y: 0.6, radius: 0.3, opacity: 0.035, speedX: 0.006, speedY: 0.009, phaseX: 1.2, phaseY: 0.8 },
-      { color: [143, 163, 176], x: 0.5, y: 0.8, radius: 0.28, opacity: 0.03, speedX: 0.007, speedY: 0.005, phaseX: 2.4, phaseY: 1.6 },
+      { color: [79, 107, 138], x: 0.3, y: 0.25, radius: 0.4, opacity: 0.025, speedX: 0.005, speedY: 0.004, phaseX: 0, phaseY: 0.5 },
+      { color: [79, 107, 138], x: 0.7, y: 0.65, radius: 0.35, opacity: 0.018, speedX: 0.004, speedY: 0.006, phaseX: 1.5, phaseY: 1.0 },
     ];
 
     let startTime = performance.now();
@@ -32,14 +35,14 @@ export default function AuroraCanvas() {
 
       for (const blob of blobs) {
         const [r, g, b] = blob.color;
-        const cx = (blob.x + Math.sin(t * blob.speedX + blob.phaseX) * 0.12) * w;
-        const cy = (blob.y + Math.cos(t * blob.speedY + blob.phaseY) * 0.1) * h;
+        const cx = (blob.x + Math.sin(t * blob.speedX + blob.phaseX) * 0.08) * w;
+        const cy = (blob.y + Math.cos(t * blob.speedY + blob.phaseY) * 0.06) * h;
         const radius = blob.radius * Math.max(w, h);
-        const breathe = blob.opacity * (0.7 + 0.3 * Math.sin(t * 0.15 + blob.phaseX));
+        const breathe = blob.opacity * (0.8 + 0.2 * Math.sin(t * 0.1 + blob.phaseX));
 
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
         grad.addColorStop(0, `rgba(${r},${g},${b},${breathe})`);
-        grad.addColorStop(0.5, `rgba(${r},${g},${b},${breathe * 0.4})`);
+        grad.addColorStop(0.5, `rgba(${r},${g},${b},${breathe * 0.3})`);
         grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
         ctx.fillStyle = grad;
@@ -62,6 +65,7 @@ export default function AuroraCanvas() {
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none hidden md:block"
       style={{ zIndex: 0 }}
+      aria-hidden="true"
     />
   );
 }
