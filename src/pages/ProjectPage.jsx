@@ -21,7 +21,7 @@ function SectionDivider() {
       className="h-[1px] my-10"
       style={{
         background:
-          'linear-gradient(90deg, transparent 0%, rgba(94,218,158,0.15) 20%, rgba(123,140,222,0.12) 50%, rgba(201,123,181,0.08) 80%, transparent 100%)',
+          'linear-gradient(90deg, transparent 0%, rgba(58,175,169,0.2) 20%, rgba(196,149,106,0.12) 60%, transparent 100%)',
       }}
     />
   );
@@ -201,10 +201,10 @@ export default function ProjectPage() {
               ) : (
                 <>
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-pink"
+                    className="w-1.5 h-1.5 rounded-full bg-warm"
                     style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
                   />
-                  <span className="font-mono text-[11px] text-pink">building</span>
+                  <span className="font-mono text-[11px] text-warm">building</span>
                 </>
               )}
             </div>
